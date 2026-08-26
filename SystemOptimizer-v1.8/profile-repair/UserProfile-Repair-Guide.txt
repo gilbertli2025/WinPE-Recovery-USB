@@ -1,0 +1,152 @@
+================================================================================
+  HOW TO FIX / RESTORE A WINDOWS USER PROFILE  (step-by-step guide)
+================================================================================
+  For normal Windows users. Everything here is safe IF you follow the order:
+  BACK UP FIRST, then fix, then restart. Nothing is deleted unless you say so.
+
+--------------------------------------------------------------------------------
+1. WHAT A USER PROFILE IS
+--------------------------------------------------------------------------------
+Your user profile is TWO linked pieces:
+
+  A) The profile FOLDER  ->  C:\Users\<YourName>
+     Holds: Desktop, Documents, Downloads, Pictures, Music, Videos, AppData,
+     and a file called NTUSER.DAT (your personal registry settings).
+
+  B) A registry KEY  ->  HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion
+                                         \ProfileList\<SID>
+     Windows uses this to FIND your folder.
+
+The SID is a unique ID for your account (e.g. S-1-5-21-12345-...-1001).
+Fixing a profile = getting the folder and the registry key back in sync.
+
+--------------------------------------------------------------------------------
+2. BEFORE YOU START  (read this first - it saves you)
+--------------------------------------------------------------------------------
+- DO NOT delete the profile folder. Deleting destroys your data.
+  Always COPY it first, then fix.
+- You cannot fix a profile while you are logged into it.
+  Log in as ANOTHER administrator account when repairing.
+- The most important thing you own is your DATA (Documents, Pictures, etc.).
+  Protect that first, and the "profile" is just the shell around it.
+
+--------------------------------------------------------------------------------
+3. USE THE UTILITY TO SEE YOUR PROFILES
+--------------------------------------------------------------------------------
+Run  ProfileRepair.cmd  (double-click it). It opens a window that lists every
+profile on the PC and shows, for each one:
+
+  Status      = OK / TEMPORARY / INACTIVE / MISSING FOLDER
+  SID         = the unique profile ID
+  Account     = the name Windows shows
+  State       = 0 (normal), 1 (temporary), 2 (inactive)
+  Folder      = where the profile folder is, and whether it exists
+
+Use the "Check profile health" button to highlight which profiles need help.
+
+--------------------------------------------------------------------------------
+4. METHOD A - FIX A "TEMPORARY PROFILE" (State = 1)
+--------------------------------------------------------------------------------
+Symptom: "We can't sign into your account" or "You're using a temporary profile."
+
+  Step 1  In the utility, select the profile showing TEMPORARY / State 1.
+  Step 2  Click "Back up selected profile" first (see section 6).
+  Step 3  Click "Fix temporary profile". It sets State back to 0.
+  Step 4  Restart the PC and sign in again.
+
+This is the #1 fix and it is fully reversible (you only changed one number).
+
+--------------------------------------------------------------------------------
+5. METHOD B - PROFILE FOLDER IS MISSING OR SEVERELY BROKEN
+--------------------------------------------------------------------------------
+Symptom: Profile shows INACTIVE, or the folder listed does NOT exist,
+         or the profile looks empty / keeps resetting.
+
+Do NOT try to patch it. Rebuild a clean profile and copy your data across:
+
+  Step 1  Back up your old folder with the utility (section 6).
+  Step 2  Create a NEW local user:
+          Settings -> Accounts -> Other users -> Add account -> sign in once.
+          This builds a fresh, healthy profile. Then sign out.
+  Step 3  Run the utility, select the NEW profile in the list, and click
+          "Restore into selected profile". Pick the backup folder (the one
+          containing Desktop / Documents / etc.). The utility copies your
+          Desktop, Documents, Downloads, Pictures, Music, Videos (and app
+          settings if you chose them) back into the new profile.
+          It does NOT copy NTUSER.DAT - that is correct and keeps the new
+          profile healthy.
+  Step 4  Log into the new profile, confirm everything is there.
+  Step 5  Only now, remove the old broken profile.
+
+This is the recommended route when a profile is badly corrupted - it is faster
+and more reliable than trying to repair NTUSER.DAT, and the utility does the
+copy for you.
+
+--------------------------------------------------------------------------------
+6. BACK UP A PROFILE (the utility's "Back up selected profile")
+--------------------------------------------------------------------------------
+Click it, then choose how much to copy:
+
+  [Yes] User data + App settings  ->  Desktop, Documents, Downloads, Pictures,
+        Music, Videos AND AppData\Roaming (keeps your app settings too).
+        A good balance.
+  [No]  User data only (fast)      ->  just Desktop, Documents, Downloads,
+        Pictures, Music, Videos. Recommended for most people - this is what
+        you need to restore your files.
+
+The utility then copies each chosen folder to a destination you pick (e.g. this
+USB drive) using robocopy, which:
+  - copies everything including subfolders  (/E)
+  - copies data + attributes + timestamps   (/COPY:DAT)
+  - retries briefly on locked files         (/R:1 /W:1)
+  - skips junctions (avoids loops)          (/XJ)
+
+Important:
+  - If you see an error about NTUSER.DAT - that is NORMAL. Those files are
+    locked because you are logged into the profile right now, and they are only
+    your registry settings, NOT your documents. Your files are still backed up.
+  - The copy is safe: it only writes to the NEW destination folder and never
+    touches your original files. Do this BEFORE any repair.
+
+--------------------------------------------------------------------------------
+7. METHOD C - CORRUPT NTUSER.DAT (profile loads but is broken)
+--------------------------------------------------------------------------------
+If the profile loads but your settings/apps reset every time, NTUSER.DAT is
+likely damaged. The clean fix is the same as Method B: back up, build a new
+profile, copy your data (NOT NTUSER.DAT), then remove the old one.
+
+A quick temporary alternative for lost settings only:
+  - Windows keeps a backup of NTUSER.DAT. Restore it and reboot:
+      reg load  HKU\TempCopy  C:\Users\<name>\NTUSER.DAT
+      (seek a recent, healthy copy, then reg unload)
+  This is fiddly - most normal users are better off with Method B.
+
+--------------------------------------------------------------------------------
+8. GOLDEN RULES  (quick checklist)
+--------------------------------------------------------------------------------
+  [x] Back up the profile folder FIRST (robocopy to this USB).
+  [x] Fix the registry State, do NOT delete the folder.
+  [x] Do NOT copy a broken NTUSER.DAT into a new profile.
+  [x] Repair from a DIFFERENT administrator account, not the broken one.
+  [x] Restart after changing State, then sign in and test.
+  [x] Keep the USB backup until you are 100% sure the new profile is good.
+  [x] Every step above is reversible because you backed up first.
+
+--------------------------------------------------------------------------------
+9. WHEN TO JUST REBUILD (don't over-engineer)
+--------------------------------------------------------------------------------
+If the profile is badly broken, rebuilding a fresh profile + copying your data
+is faster and safer than deep registry surgery. For most people that IS the
+right fix. The utility exists so you can SEE the status, PROTECT your data,
+and apply the simple one-value fix when that's all that's needed.
+
+--------------------------------------------------------------------------------
+10. GLOSSARY
+--------------------------------------------------------------------------------
+  SID         Unique ID of your account/profile.
+  Profile     Folder + registry key that hold your personal settings.
+  NTUSER.DAT  File in the profile that stores your registry settings.
+  State=0     Normal profile.  State=1  Temporary.  State=2  Inactive.
+  ProfileImagePath  The registry value that tells Windows where the folder is.
+  robocopy    A built-in Windows copy tool (safe, incremental).
+================================================================================

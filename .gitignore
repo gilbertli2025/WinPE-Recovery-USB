@@ -1,0 +1,12 @@
+# Build / temp artifacts (not part of the source)
+build/
+build.log
+update-mount
+update-mount-*/
+diag-*.txt
+diag-file-copy.bat
+diag-bootrec.bat
+
+# System Optimizer binaries (build from source or grab a release)
+SystemOptimizer-v1.8/*.exe
+SystemOptimizer-v1.8/*.msi

@@ -1,0 +1,69 @@
+HOW TO RESTORE YOUR SETTINGS FROM THE USB BACKUP
+=================================================
+Use this when Windows crashed / was reinstalled, or to move your settings to
+another PC.
+
+WHAT YOU NEED
+  - The USB drive that holds your backup.
+  - The backup is in a folder on the USB called:  SystemOptimizer-Backup\<Your PC name>\
+    (e.g. D:\SystemOptimizer-Backup\DESKTOP-H9D3P6E)
+
+--------------------------------------------------------------------
+EASIEST WAY - one-click restore
+--------------------------------------------------------------------
+1. Plug in the USB drive that holds your backup.
+2. Double-click  1-Click-System-Restore.cmd   (it is in the same folder
+   as this file, on the USB drive).
+3. Click Yes on the permission prompt.
+4. The program finds your backup automatically and restores:
+     - browser bookmarks (Edge / Chrome)
+     - Wi-Fi profiles
+     - user settings
+   A pop-up tells you when it is done.
+5. Sign out and back in (or restart) so everything takes effect.
+
+--------------------------------------------------------------------
+EASY WAY - let the program do it
+--------------------------------------------------------------------
+1. Run this program from the USB drive (double-click 1-Click-System-Optimizer.cmd,
+   click Yes on the permission prompt).
+2. Go to the "Backup & Restore" tab.
+3. Click "Restore from USB" and choose the backup folder
+   (SystemOptimizer-Backup\<Your PC name>).
+4. The program restores: browser bookmarks, Wi-Fi profiles, user settings.
+5. Sign out and back in (or restart) so everything takes effect.
+
+--------------------------------------------------------------------
+MANUAL WAY - restore each item yourself
+--------------------------------------------------------------------
+Browser bookmarks:
+  - Close Edge/Chrome.
+  - Copy "bookmarks-Edge.json" / "bookmarks-Chrome.json" from the backup to:
+      Edge:  C:\Users\<you>\AppData\Local\Microsoft\Edge\User Data\Default\Bookmarks
+      Chrome:C:\Users\<you>\AppData\Local\Google\Chrome\User Data\Default\Bookmarks
+  - Reopen the browser.
+
+Wi-Fi profiles:
+  - Open a command prompt as Administrator and run:
+      netsh wlan add profile filename="<backup>\wifi\<profile>.xml" user=current
+    for each XML file in the "wifi" folder.
+
+User settings (registry):
+  - Open a command prompt as Administrator and run:
+      reg import "<backup>\HKCU-settings-<PC>.reg"
+  - NOTE: this works best on the SAME PC. On a different PC some settings may
+    not transfer (the user account is different).
+
+This program's own profile:
+  - Open the program, tick your choices, or use Export/Import settings.
+
+--------------------------------------------------------------------
+IMPORTANT NOTES
+--------------------------------------------------------------------
+- Passwords are NOT in this backup (by design, for security). Use a password
+  manager for those.
+- Documents / pictures are NOT backed up here. Use File History, OneDrive or a
+  separate copy for your personal files.
+- After restoring, sign out and back in (or restart) for full effect.
+- If BitLocker was used on the old PC, you also need its recovery key
+  (it was saved to your Microsoft account or a file - keep it safe).
