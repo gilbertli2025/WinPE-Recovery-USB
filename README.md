@@ -32,10 +32,14 @@ A custom **Windows PE** recovery environment you boot from the USB. It shows a m
 | 3 | System File Checker | `sfc /scannow` on the offline Windows |
 | 4 | DISM /RestoreHealth | Repairs the Windows image (needs internet) |
 | 5 | Boot Repair | `bcdboot` + `bootsect` (fixes boot/MBR) |
-| 6 | Copy Files | Guided recovery of Documents/Desktop/Downloads/Pictures/Music/Videos |
-| 7 | List drives | Shows which drives exist |
-| 8 | Restart | Reboot the PC |
-| 9 | Shut down | Power off |
+| 6 | Backup your files | Shows the detected drives, auto-finds the USB, then copies Documents/Desktop/Downloads/Pictures/Music/Videos to `RecoveredData\<Computer>\<User>\<timestamp>\` |
+| 7 | Restart | `wpeutil reboot` |
+| 8 | Shut down | `wpeutil shutdown` |
+
+> Notes on the recovery environment:
+> - **Restart / Shut down** use `wpeutil` (the plain `shutdown.exe` does not respond in WinPE).
+> - **Boot Repair** uses `bcdboot` + `bootsect` because `bootrec` is not present in WinPE.
+> - **Backup files** auto-detects the USB three ways (removable volume → the recovery USB via `sources\boot.wim` → ask the user), so it is reliable.
 
 ### 2) System Optimizer v1.8
 Run it when Windows boots normally (double-click `1-Click-System-Optimizer.cmd`
@@ -104,13 +108,17 @@ WinPE-Recovery/
 
 - **`bootrec` is NOT in WinPE** — boot repair must use `bcdboot` + `bootsect`
   (these ARE in base WinPE; do NOT try to copy them in, it fails with access denied).
+- **Restart / shutdown in WinPE** must use `wpeutil reboot` / `wpeutil shutdown`
+  (the normal `shutdown.exe` does not respond).
 - The recovery scripts and menu live **inside `boot.wim`** (X:\Recovery at boot),
   not as loose files on the USB.
 - Batch scripts must be **CRLF** line endings.
 - `build.cmd` self-elevates (UAC). The full build takes ~15-30 minutes on a
   USB 2.0 drive because it formats and writes the image.
-- The in-place update (`update.cmd`) can be unreliable for script changes —
-  if a script change doesn't appear, do a full `rebuild.cmd`.
+- **The in-place update (`update.cmd`) can be unreliable for script changes** —
+  if a script change doesn't appear, do a full `rebuild.cmd` instead.
+- Backup's USB auto-detect: prefer detecting the drive you booted from via
+  `sources\boot.wim` over diskpart "Removable" parsing (more reliable in WinPE).
 
 ## License / usage
 
