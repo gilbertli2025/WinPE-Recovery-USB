@@ -54,9 +54,17 @@ if not exist "%DEST%" mkdir "%DEST%"
 
 cls
 echo ============================================================
-echo   COPY FILES  -  backup your data
+echo   BACKUP YOUR FILES
 echo ============================================================
-echo   Windows drive : %WD%
+echo   Drives detected on this PC:
+for %%d in (C D E F G H I J K L M N O P Q R S T U V W Y Z) do (
+  if exist "%%d:\" (
+    if /i "%%d:"=="%WD%" ( echo     %%d:\   <- your Windows drive )
+    else if /i "%%d:"=="%USB%:" ( echo     %%d:\   <- USB (files will be saved here) )
+    else echo     %%d:\
+  )
+)
+echo.
 echo   User profile  : %UNAME%
 echo   Saving to     : %DEST%
 echo.

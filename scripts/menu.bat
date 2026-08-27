@@ -5,18 +5,16 @@ cls
 echo ============================================================
 echo            WINPE RECOVERY MENU
 echo ============================================================
-echo   (Your Windows is usually on a drive other than X:)
-echo   Use option 7 to see which drives exist.)
+echo   (Backup files will show your drives and guide you.)
 echo.
 echo   1.  Command Prompt
 echo   2.  Reset a local Windows password
 echo   3.  System File Checker  (sfc /scannow)
 echo   4.  DISM  /RestoreHealth
-echo   5.  Boot repair  (bootrec)
-echo   6.  Copy files  (recover your data)
-echo   7.  List drives
-echo   8.  Restart the PC
-echo   9.  Shut down
+echo   5.  Boot repair
+echo   6.  Backup your files  (Documents, Pictures, etc.)
+echo   7.  Restart the PC
+echo   8.  Shut down
 echo.
 set /p c=  Type a number and press Enter: 
 if "%c%"=="1" goto cmd
@@ -25,9 +23,8 @@ if "%c%"=="3" call %~dp0sfc-repair.bat
 if "%c%"=="4" call %~dp0dism-repair.bat
 if "%c%"=="5" call %~dp0bootrec-repair.bat
 if "%c%"=="6" call %~dp0file-copy.bat
-if "%c%"=="7" call %~dp0list-drives.bat
-if "%c%"=="8" wpeutil reboot >nul 2>&1 & exit /b
-if "%c%"=="9" wpeutil shutdown >nul 2>&1 & exit /b
+if "%c%"=="7" wpeutil reboot >nul 2>&1 & exit /b
+if "%c%"=="8" wpeutil shutdown >nul 2>&1 & exit /b
 goto menu
 :cmd
 cls
