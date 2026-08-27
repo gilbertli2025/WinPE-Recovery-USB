@@ -25,13 +25,21 @@ if not defined PROFILE ( echo  [ERROR] No user profile found under %WD%\Users & 
 set "UNAME="
 for %%U in ("%PROFILE%") do set "UNAME=%%~nxU"
 
-rem ---- 3. Detect the USB (removable) drive via diskpart ----
+rem ---- 3. Detect the USB drive ----
+rem Method A: a removable volume (diskpart)
 echo list volume > "%TEMP%\dp.txt"
 diskpart /s "%TEMP%\dp.txt" > "%TEMP%\dp.out" 2>nul
 set "USB="
 for /f "tokens=3" %%L in ('findstr /i "Removable" "%TEMP%\dp.out" 2^>nul') do (
   if not defined USB if exist "%%L:\" set "USB=%%L"
 )
+rem Method B: the recovery USB you booted from (has sources\boot.wim)
+if not defined USB (
+  for %%d in (C D E F G H I J K L M N O P Q R S T U V W Y Z) do (
+    if not defined USB if exist "%%d:\sources\boot.wim" if /i not "%%d:"=="%WD%" set "USB=%%d"
+  )
+)
+rem Method C: ask the user
 if not defined USB (
   echo  Could not auto-detect the USB drive.
   echo  Please type the drive letter to save to ^(e.g. F^):
