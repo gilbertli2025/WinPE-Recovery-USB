@@ -26,8 +26,8 @@ if "%c%"=="4" call %~dp0dism-repair.bat
 if "%c%"=="5" call %~dp0bootrec-repair.bat
 if "%c%"=="6" call %~dp0file-copy.bat
 if "%c%"=="7" call %~dp0list-drives.bat
-if "%c%"=="8" shutdown /r /t 0
-if "%c%"=="9" shutdown /s /t 0
+if "%c%"=="8" wpeutil reboot >nul 2>&1 & exit /b
+if "%c%"=="9" wpeutil shutdown >nul 2>&1 & exit /b
 goto menu
 :cmd
 cls
